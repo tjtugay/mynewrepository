@@ -1,0 +1,76 @@
+<?php
+// module/Album/view/album/album/edit.phtml:
+
+$title = 'Edit album';
+$this->headTitle($title);
+?>
+<h1><?= $this->escapeHtml($title) ?></h1>
+
+<?php 
+$this->inlineScript()->captureStart();
+echo <<<JS
+    $(document).ready(function(){
+    	var getAge = birthDate => Math.floor((new Date() - new Date(birthDate).getTime()) / 31556925994);
+    $('#year').val(getAge(document.getElementsByName("published")[0].value));
+    	$(document.getElementsByName("published")).on( 'change', function(){
+    		var getAge = birthDate => Math.floor((new Date() - new Date(birthDate).getTime()) / 31556925994);
+    $('#year').val(getAge(document.getElementsByName("published")[0].value));
+    console.log(document.getElementsByName("published")[0].value);
+    	});
+    
+    });
+JS;
+$this->inlineScript()->captureEnd();
+?>
+
+<?php
+$album = $form->get('title');
+$album->setAttribute('class', 'form-control');
+$album->setAttribute('placeholder', 'Album title');
+
+$artist = $form->get('artist');
+$artist->setAttribute('class', 'form-control');
+$artist->setAttribute('placeholder', 'Artist');
+
+$published = $form->get('published');
+$published->setAttribute('class', 'form-control');
+$published->setAttribute('placeholder', 'Published');
+
+$submit = $form->get('submit');
+$submit->setAttribute('class', 'btn btn-primary');
+
+$form->setAttribute('action', $this->url('album', [
+    'action' => 'edit',
+    'id'     => $id,
+]));
+$form->prepare();
+
+echo $this->form()->openTag($form);
+?>
+<div class="form-group">
+    <?= $this->formLabel($album) ?>
+    <?= $this->formElement($album) ?>
+    <?= $this->formElementErrors()->render($album, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($artist) ?>
+    <?= $this->formElement($artist) ?>
+    <?= $this->formElementErrors()->render($artist, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <?= $this->formLabel($published) ?>
+    <?= $this->formElement($published) ?>
+    <?= $this->formElementErrors()->render($published, ['class' => 'help-block']) ?>
+</div>
+
+<div class="form-group">
+    <label for="artist">Year</label>   
+    <input type="number" class="form-control" id="year">    
+</div>
+
+<?php
+echo $this->formSubmit($submit);
+echo $this->formHidden($form->get('id'));
+echo $this->form()->closeTag();
